@@ -1,3 +1,6 @@
+body{
+    background:#fff;
+}
 .panel {
     height: 500px;
     padding: 0;
@@ -9,6 +12,10 @@
     background: #adadad;
     line-height: 36px;
     font-weight: bold;
+}
+
+.paper header{
+    background: #7d7d7d;
 }
 
 .tools,

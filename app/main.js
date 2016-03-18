@@ -1,13 +1,5 @@
-import LineElement from './scripts/LineElement';
-class Main{
-    init(){
-        this.loadCss();
-    }
+import Element from './scripts/element/EdgeElement';
+require('./styles/main.css');
 
-    loadCss(){
-        require('bootstrap-loader');
-    }
-}
-
-var main = new Main();
-main.init();
+let element = new Element('111', 1,1,1,1);
+element.onClick();
