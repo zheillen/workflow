@@ -10,10 +10,15 @@ export default class extends Element {
         this._radius = 0;
         this._borderColor = '#bf0000';
         this._borderWidth = 2;
+        this._parent = null;
+        this._position = null;
         // 初始化
         this.init();
     }
 
+    /**
+     * 初始化
+     */
     init() {
         this._element = this._paper.rect(this._x, this._y, this._w, this._h, this._radius);
         this._element.attr({
@@ -41,10 +46,27 @@ export default class extends Element {
      * @y  {y轴坐标}
      */
     moveTo(x, y) {
-        this._element.attr({
-            x: x,
-            y: y
-        });
+        this.x = x;
+        this.y = y;
     }
+
+    // Prototies
+
+    get parent() {
+        return this._parent;
+    }
+
+    set parent(value) {
+        this._parent = value;
+    }
+
+    get position() {
+        return this._position;
+    }
+
+    set position(value) {
+        this._position = value;
+    }
+
 
 }

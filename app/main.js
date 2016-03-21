@@ -10,7 +10,7 @@ let val = 60,
     raphael = new Raphael(paperCanvas, w, h);
 
 
-let startElement = new FlowElement(raphael, val * 2, val, val, val);
+let startElement = new FlowElement(raphael, val * 2, val, val * 3, val * 2);
 startElement.on(Constains.EVENT_CLICK, function() {
     console.log('click a element');
 });

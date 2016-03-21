@@ -84,86 +84,101 @@ export default class {
     get id() {
         return this._id;
     }
+
     get width() {
         return this._w;
     }
-    get height() {
-        return this._h;
-    }
-    get x() {
-        return this._x;
-    }
-    get y() {
-        return this._y;
-    }
-    get text() {
-        return this._text;
-    }
-    get fontSize() {
-        return this._fontSize;
-    }
-    get fontColor() {
-        return this._fontColor;
-    }
-    get borderColor() {
-        return this._borderColor;
-    }
-    get borderWidth() {
-        return this._borderWidth;
-    }
-    get backgroundColor() {
-        return this._backgroundColor;
-    }
-    get state() {
-        return this._state;
-    }
-    get cursor() {
-        return this._cursor;
-    }
-
-
     set width(value) {
         this._w = value;
         this._element.attr('width', value);
+    }
+
+    get height() {
+        return this._h;
     }
     set height(value) {
         this._h = value;
         this._element.attr('height', value);
     }
+
+    get x() {
+        return this._x;
+    }
     set x(value) {
         this._x = value;
         this._element.attr('x', value);
+    }
+
+    get y() {
+        return this._y;
     }
     set y(value) {
         this._y = value;
         this._element.attr('y', value);
     }
+
+    get text() {
+        return this._text;
+    }
     set text(value) {
         this._text = value;
+    }
+
+    get fontSize() {
+        return this._fontSize;
     }
     set fontSize(value) {
         this._fontSize = value;
     }
+
+    get fontColor() {
+        return this._fontColor;
+    }
     set fontColor(value) {
         this._fontColor = value;
+    }
+
+    get borderColor() {
+        return this._borderColor;
     }
     set borderColor(value) {
         this._borderColor = value;
         this._element.attr('stroke', value);
     }
+
+    get borderWidth() {
+        return this._borderWidth;
+    }
     set borderWidth(value) {
         this._borderWidth = value;
         this._element.attr('stroke-width', value);
     }
-    set backgroundColor(value) {
+
+    get backgroundColor() {
+        return this._backgroundColor;
+    }
+     set backgroundColor(value) {
         this._backgroundColor = value;
         this._element.attr('fill', value);
     }
+
+    get state() {
+        return this._state;
+    }
     set state(value) {
         this._state = value;
+    }
+
+    get cursor() {
+        return this._cursor;
     }
     set cursor(value) {
         this._cursor = value;
         this._element.attr('cursor', value);
     }
+
+    get paper(){
+        return this._paper;
+    }
+
 }

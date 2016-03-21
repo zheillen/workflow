@@ -9,6 +9,10 @@
 export const EVENT_CLICK = 'EVENT_CLICK';
 // 移动事件
 export const EVENT_MOVE = 'EVENT_MOVE';
+// 调整大小事件
+export const EVENT_RESIZE = 'EVENT_RESIZE';
+// 开始调整大小事件
+export const EVENT_ENGIN_RESIZE = 'EVENT_ENGIN_RESIZE';
 
 /* --------光标常量-------- */
 // 默认光标
@@ -36,3 +40,7 @@ export const POSITION_TOP_RIGHT = 2006;
 export const POSITION_BOTTOM_LEFT = 2007;
 export const POSITION_BOTTOM_RIGHT = 2008;
 
+
+/* --------其他常量-------- */
+export const ELEMENT_MIN_WIDTH = 20;
+export const ELEMENT_MIN_HEIGHT = 20;

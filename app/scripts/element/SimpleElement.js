@@ -44,20 +44,6 @@ export default class extends Element {
     }
 
     /**
-     * 移动节点
-     * @param x {X轴}
-     * @param y {Y轴}
-     */
-    move(x, y) {}
-
-    /**
-     * 调整节点
-     * @param {int} w 宽度
-     * @param {int} h 高度
-     */
-    resize(w, h) {}
-
-    /**
      * 注册移动事件
      * @param callback {回调方法}
      */
@@ -74,29 +60,82 @@ export default class extends Element {
     }
 
     /**
+     * 移动节点
+     * @param x {X轴}
+     * @param y {Y轴}
+     */
+    move(x, y) {}
+
+    beginResize() {
+        this._ow = this._w;
+        this._oh = this._h;
+        this._ox = this._x;
+        this._oy = this._y;
+        // 执行开始调整事件
+        let callSet = this._eventMap.get(Constains.EVENT_ENGIN_RESIZE);
+        callSet instanceof Set && callSet.forEach(item => typeof item === 'function' && item());
+    }
+
+    /**
+     * 调整节点
+     * @param {int} w 宽度
+     * @param {int} h 高度
+     */
+    resize(x, y) {
+        // 重新绘制连接点
+        this._renderLinkPointElement();
+        // 重新绘制变形点
+        this._renderResizeElement();
+        // 执行调整事件
+        let callSet = this._eventMap.get(Constains.EVENT_RESIZE);
+        callSet instanceof Set && callSet.forEach(item => typeof item === 'function' && item());
+    }
+
+    /**
      * 创建4个连接点
      */
     _createLinkPointElement() {
-        // 计算连接点位置
-        let positionMap = new Map();
-        let offset = (this._pointBorderWidth * 2 + this._pointRadius) / 2;
-        // 左边连接点
-        positionMap.set(Constains.POSITION_LEFT, [this._x, this._y + this._h / 2]);
-        // 上面连接点
-        positionMap.set(Constains.POSITION_TOP, [this._x + this._w / 2, this._y]);
-        // 右边连接点
-        positionMap.set(Constains.POSITION_RIGHT, [this._x + this._w, this._y + this._h / 2]);
-        // 下边连接点
-        positionMap.set(Constains.POSITION_BOTTOM, [this._x + this._w / 2, this._y + this._h]);
+        let positionMap = this._getLinkPointPositions();
         // 循环创建连接点
         for (let key of positionMap.keys()) {
-            let position = positionMap.get(key),
-                x = position[0] - offset,
-                y = position[1] - offset;
-            let pointElement = new LinkPointElement(this._paper, this._pointRadius, x, y);
+            let position = positionMap.get(key);
+            let pointElement = new LinkPointElement(this._paper, this._pointRadius, position[0], position[1]);
             pointElement.borderWidth = this._pointBorderWidth;
+            pointElement.parent = this;
+            pointElement.position = key;
             this._linkPointMap.set(key, pointElement);
         }
+    }
+
+    /**
+     * 重新绘制连接点位置
+     */
+    _renderLinkPointElement() {
+        let positionMap = this._getLinkPointPositions();
+        // 循环连接点位置
+        for (let key of this._linkPointMap.keys()) {
+            let position = positionMap.get(key),
+                pointElement = this._linkPointMap.get(key);
+            pointElement.x = position[0];
+            pointElement.y = position[1];
+        }
+    }
+
+    /**
+     * 计算连接点位置
+     */
+    _getLinkPointPositions() {
+        let positionMap = new Map(),
+            offset = (this._pointBorderWidth * 2 + this._pointRadius) / 2;
+        // 左边连接点
+        positionMap.set(Constains.POSITION_LEFT, [this._x - offset, this._y + this._h / 2 - offset]);
+        // 上面连接点
+        positionMap.set(Constains.POSITION_TOP, [this._x + this._w / 2 - offset, this._y - offset]);
+        // 右边连接点
+        positionMap.set(Constains.POSITION_RIGHT, [this._x + this._w - offset, this._y + this._h / 2 - offset]);
+        // 下边连接点
+        positionMap.set(Constains.POSITION_BOTTOM, [this._x + this._w / 2 - offset, this._y + this._h - offset]);
+        return positionMap;
     }
 
     /**
@@ -132,9 +171,16 @@ export default class extends Element {
             let pointElement = new ResizePointElement(this._paper, this._pointRadius, x, y);
             pointElement.borderWidth = this._pointBorderWidth;
             pointElement.cursor = position[2];
+            pointElement.parent = this;
+            pointElement.position = key;
             this._resizePointMap.set(key, pointElement);
         }
     }
+
+    /**
+     * 重新绘制变形点位置
+     */
+    _renderResizeElement() {}
 
     /**
      * 显示变形点
