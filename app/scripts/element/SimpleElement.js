@@ -7,6 +7,14 @@ import ResizePointElement from './ResizePointElement';
  * @author Tiny
  */
 export default class extends Element {
+    /**
+     * 构造函数
+     * @param {Raphel} raphael 画图对象
+     * @param {int} w 宽度
+     * @param {int} h 高度
+     * @param {int} x X轴位置
+     * @param {int} y Y轴位置
+     */
     constructor(raphael, w, h, x, y) {
         super(raphael, w, h, x, y);
         // 节点数据
@@ -36,8 +44,8 @@ export default class extends Element {
         let positionMap = this._getLinkPointPositions();
         // 循环创建连接点
         for (let key of positionMap.keys()) {
-            let position = positionMap.get(key);
-            let pointElement = new LinkPointElement(this._paper, this._pointRadius, position[0], position[1]);
+            let position = positionMap.get(key),
+                pointElement = new LinkPointElement(this._paper, this._pointRadius, position[0], position[1]);
             pointElement.borderWidth = this._pointBorderWidth;
             pointElement.parent = this;
             pointElement.position = key;
@@ -61,19 +69,19 @@ export default class extends Element {
 
     /**
      * 计算连接点位置
+     * @return {Map} 连接点位置集合
      */
     _getLinkPointPositions() {
-        let positionMap = new Map(),
-            offset = (this._pointBorderWidth * 2 + this._pointRadius) / 2;
+        let positionMap = new Map();
         // 左边连接点
-        positionMap.set(Constains.POSITION_LEFT, [this._x - offset, this._y + this._h / 2 - offset]);
+        positionMap.set(Constains.POSITION_LEFT, [this._x, this._y + this._h / 2]);
         // 上面连接点
-        positionMap.set(Constains.POSITION_TOP, [this._x + this._w / 2 - offset, this._y - offset]);
+        positionMap.set(Constains.POSITION_TOP, [this._x + this._w / 2, this._y]);
         // 右边连接点
-        positionMap.set(Constains.POSITION_RIGHT, [this._x + this._w - offset, this._y + this._h / 2 - offset]);
+        positionMap.set(Constains.POSITION_RIGHT, [this._x + this._w, this._y + this._h / 2]);
         // 下边连接点
-        positionMap.set(Constains.POSITION_BOTTOM, [this._x + this._w / 2 - offset, this._y + this._h - offset]);
-        return positionMap;
+        positionMap.set(Constains.POSITION_BOTTOM, [this._x + this._w / 2, this._y + this._h]);
+        return this._cleanPointPositionOffset(positionMap);
     }
 
     /**
@@ -91,22 +99,12 @@ export default class extends Element {
      */
     _createResizeElement() {
         // 计算变形点位置
-        let positionMap = new Map();
+        let positionMap = this._getResizePointPositions();
         let offset = (this._pointBorderWidth * 2 + this._pointRadius) / 2;
-        // 左上变形点
-        positionMap.set(Constains.POSITION_TOP_LEFT, [this._x, this._y, Constains.CURSOR_NW_RESIZE]);
-        // 右上变形点
-        positionMap.set(Constains.POSITION_TOP_RIGHT, [this._x + this._w, this._y, Constains.CURSOR_NE_RESIZE]);
-        // 左下变形点
-        positionMap.set(Constains.POSITION_BOTTOM_LEFT, [this._x, this._y + this._h, Constains.CURSOR_SW_RESIZE]);
-        // 右下变形点
-        positionMap.set(Constains.POSITION_BOTTOM_RIGHT, [this._x + this._w, this._y + this._h, Constains.CURSOR_SE_RESIZE]);
         // 循环创建连接点
         for (let key of positionMap.keys()) {
             let position = positionMap.get(key),
-                x = position[0] - offset,
-                y = position[1] - offset;
-            let pointElement = new ResizePointElement(this._paper, this._pointRadius, x, y);
+                pointElement = new ResizePointElement(this._paper, this._pointRadius, position[0], position[1]);
             pointElement.borderWidth = this._pointBorderWidth;
             pointElement.cursor = position[2];
             pointElement.parent = this;
@@ -118,7 +116,33 @@ export default class extends Element {
     /**
      * 重新绘制变形点位置
      */
-    _renderResizeElement() {}
+    _renderResizeElement() {
+        let positionMap = this._getResizePointPositions();
+        // 循环连接点位置
+        for (let key of this._resizePointMap.keys()) {
+            let position = positionMap.get(key),
+                pointElement = this._resizePointMap.get(key);
+            pointElement.x = position[0];
+            pointElement.y = position[1];
+        }
+    }
+
+    /**
+     * 计算变形点位置
+     * @return {Map} 变形点位置集合
+     */
+    _getResizePointPositions() {
+        let positionMap = new Map();
+        // 左上变形点
+        positionMap.set(Constains.POSITION_TOP_LEFT, [this._x, this._y, Constains.CURSOR_NW_RESIZE]);
+        // 右上变形点
+        positionMap.set(Constains.POSITION_TOP_RIGHT, [this._x + this._w, this._y, Constains.CURSOR_NE_RESIZE]);
+        // 左下变形点
+        positionMap.set(Constains.POSITION_BOTTOM_LEFT, [this._x, this._y + this._h, Constains.CURSOR_SW_RESIZE]);
+        // 右下变形点
+        positionMap.set(Constains.POSITION_BOTTOM_RIGHT, [this._x + this._w, this._y + this._h, Constains.CURSOR_SE_RESIZE]);
+        return this._cleanPointPositionOffset(positionMap);
+    }
 
     /**
      * 显示变形点
@@ -131,65 +155,118 @@ export default class extends Element {
     _hideResizeElement() {}
 
     /**
+     * 清除点节点的偏移量
+     * @param  {Map} map 点节点集合
+     * @param  {int} offset 偏移量
+     * @return {Map} 清除后的集合
+     */
+    _cleanPointPositionOffset(map) {
+        let offset = (this._pointBorderWidth * 2 + this._pointRadius) / 2;
+        for (let [key, value] of map) {
+            let newValue = new Array();
+            value.map(v => value.indexOf(v) < 2 ? newValue.push(v - offset) : newValue.push(v));
+            map.set(key, newValue);
+        }
+        return map;
+    }
+
+    /**
      * 初始化节点
      */
     init() {
+        // 创建实际节点
         this._element = this._paper.rect(this._x, this._y, this._w, this._h, this._radius);
+        // 给实际节点赋值
         this._element.attr({
             'fill': this._backgroundColor,
             'stroke': this._borderColor,
             'stroke-width': this._borderWidth,
             'cursor': Constains.CURSOR_DEFAULT
         });
+        // 实际节点添加点击事件
+        this._element.click(function() {
+            this.execEventCallback(Constains.EVENT_CLICK);
+        }.bind(this));
+        // 实际节点放到最后面，防止挡住变形点和连接点
         this._element.toBack();
     }
 
     /**
-     * 注册移动事件
-     * @param callback {回调方法}
+     * 节点大小变形前方法，记录变形前的坐标和宽高
      */
-    onMove(callback) {
-        this.on(Constains.EVENT_MOVE, callback);
+    beginResize() {
+        this._ox = this._x;
+        this._oy = this._y;
+        this._ow = this._w;
+        this._oh = this._h;
+        // 执行变形前事件
+        this.execEventCallback(Constains.EVENT_ENGIN_RESIZE);
+    }
+
+    /**
+     * 根据变形点移动的位置对节点的大小进行调整
+     * @param  {int} position 移动点方位
+     * @param  {int} dx 移动点X轴偏移量
+     * @param  {int} dy 移动点Y轴偏移量
+     */
+    resize(position, dx, dy) {
+        let ox = 0, // 节点X轴偏移量
+            oy = 0, // 节点Y轴偏移量
+            ow = 0, // 节点宽度偏移量
+            oh = 0; // 节点高度偏移量
+        // 重新计算坐标，当变形点有右下是坐标不变
+        switch (position) {
+            case Constains.POSITION_TOP_LEFT:
+                ox = dx;
+                oy = dy;
+                ow = -dx;
+                oh = -dy;
+                break;
+            case Constains.POSITION_TOP_RIGHT:
+                ox = 0;
+                oy = dy;
+                ow = dx;
+                oh = -dy;
+                break;
+            case Constains.POSITION_BOTTOM_LEFT:
+                ox = dx;
+                oy = 0;
+                ow = -dx;
+                oh = dy;
+                break;
+            case Constains.POSITION_BOTTOM_RIGHT:
+                ox = 0;
+                oy = 0;
+                ow = dx;
+                oh = dy;
+                break;
+        }
+        this.x = this._ox + ox;
+        this.y = this._oy + oy;
+        this.width = this._ow + ow;
+        this.height = this._oh + oh;
+        // 重新绘制连接点
+        this._renderLinkPointElement();
+        // 重新绘制变形点
+        this._renderResizeElement();
+        // 执行变形事件
+        //this.execEventCallback(Constains.EVENT_RESIZE);
     }
 
     /**
      * 注册变形事件
-     * @param callback  {回调方法}
+     * @param {function} callback 回调方法
      */
     onResize(callback) {
         this.on(Constains.EVENT_RESIZE, callback);
     }
 
     /**
-     * 移动节点
-     * @param x {X轴}
-     * @param y {Y轴}
+     * 注册变形前事件
+     * @param {function} callback 回调方法
      */
-    move(x, y) {}
-
-    beginResize() {
-        this._ow = this._w;
-        this._oh = this._h;
-        this._ox = this._x;
-        this._oy = this._y;
-        // 执行开始调整事件
-        let callSet = this._eventMap.get(Constains.EVENT_ENGIN_RESIZE);
-        callSet instanceof Set && callSet.forEach(item => typeof item === 'function' && item());
-    }
-
-    /**
-     * 调整节点
-     * @param {int} w 宽度
-     * @param {int} h 高度
-     */
-    resize(x, y) {
-        // 重新绘制连接点
-        this._renderLinkPointElement();
-        // 重新绘制变形点
-        this._renderResizeElement();
-        // 执行调整事件
-        let callSet = this._eventMap.get(Constains.EVENT_RESIZE);
-        callSet instanceof Set && callSet.forEach(item => typeof item === 'function' && item());
+    onBeginResize(callback) {
+        this.on(Constains.EVENT_ENGIN_RESIZE, callback);
     }
 
     // Properties

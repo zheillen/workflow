@@ -16,9 +16,9 @@ export const EVENT_ENGIN_RESIZE = 'EVENT_ENGIN_RESIZE';
 
 /* --------光标常量-------- */
 // 默认光标
-export const CURSOR_DEFAULT = 'default'; 
+export const CURSOR_DEFAULT = 'default';
 // 移动光标
-export const CURSOR_MOVE = 'move'; 
+export const CURSOR_MOVE = 'move';
 // 添加光标
 export const CURSOR_CROSSHAIR = 'crosshair';
 // 右上光标
@@ -42,5 +42,5 @@ export const POSITION_BOTTOM_RIGHT = 2008;
 
 
 /* --------其他常量-------- */
-export const ELEMENT_MIN_WIDTH = 20;
-export const ELEMENT_MIN_HEIGHT = 20;
+export const ELEMENT_MIN_WIDTH = 40;
+export const ELEMENT_MIN_HEIGHT = 40;

@@ -6,10 +6,12 @@ import * as Constains from '../util/Constains';
  */
 export default class {
     /**
-     * @param  {int} w 宽度
-     * @param  {int} h 高度
-     * @param  {int} x X轴位置
-     * @param  {int} y Y轴位置
+     * 构造函数
+     * @param {Raphel} raphael 画图对象
+     * @param {int} w 宽度
+     * @param {int} h 高度
+     * @param {int} x X轴位置
+     * @param {int} y Y轴位置
      */
     constructor(raphael, w, h, x, y) {
         // 节点ID，自动生成
@@ -39,8 +41,8 @@ export default class {
 
     /**
      * 节点注册事件方法
-     * @param  {事件名称}
-     * @param  {事件回调方法}
+     * @param {string} event 事件名称
+     * @param {function} callback 回调方法
      */
     on(event, callback) {
         // 检查事件是否在常量里面
@@ -57,14 +59,14 @@ export default class {
                 eventSet.add(callback);
             }
             this._eventMap.set(event, eventSet);
-        }else{
+        } else {
             throw new Error('Event ' + event + ' is not a reasonable event');
         }
     }
 
     /**
      * 取消事件绑定
-     * @param  {事件}
+     * @param {function} callback 回调方法
      */
     un(event) {
         if (this._eventMap.has(event)) {
@@ -73,11 +75,45 @@ export default class {
     }
 
     /**
+     * 执行事件的回调事件
+     * @param  {string} event 事件名称，只允许定义于常量文件的名称
+     */
+    execEventCallback(event) {
+        if (!event) {
+            throw new Error('Argument event is miss.');
+        }
+        if (event in Constains) {
+            let callSet = this._eventMap.get(event);
+            callSet instanceof Set && callSet.forEach(item => typeof item === 'function' && item.call(this));
+        } else {
+            throw new Error("Can't find event " + event + ".");
+        }
+    }
+
+    /**
+     * 节点移动方法
+     * @param  {int} x X轴最终点
+     * @param  {int} y Y轴最终点
+     */
+    move(x, y) {
+        this.x = x;
+        this.y = y;
+    }
+
+    /**
      * 注册单击事件
-     * @param  {回调方法}
+     * @param {function} callback 回调方法
      */
     onClick(callback) {
         this.on(Constains.EVENT_CLICK, callback);
+    }
+
+    /**
+     * 注册移动事件
+     * @param {function} callback 回调方法
+     */
+    onMove(callback) {
+        this.on(Constains.EVENT_MOVE, callback);
     }
 
     // Properties
@@ -157,7 +193,7 @@ export default class {
     get backgroundColor() {
         return this._backgroundColor;
     }
-     set backgroundColor(value) {
+    set backgroundColor(value) {
         this._backgroundColor = value;
         this._element.attr('fill', value);
     }
@@ -177,7 +213,7 @@ export default class {
         this._element.attr('cursor', value);
     }
 
-    get paper(){
+    get paper() {
         return this._paper;
     }
 

@@ -29,27 +29,6 @@ export default class extends Element {
         });
     }
 
-    /**
-     * 移动节点
-     * @ox  {x轴偏移量}
-     * @oy  {y轴偏移量}
-     */
-    move(ox, oy) {
-        let x = this._element.attr('x'),
-            y = this._element.attr('y');
-        this.moveTo(ox + x, oy + y);
-    }
-
-    /**
-     * 移动节点到某个地方
-     * @x  {x轴坐标}
-     * @y  {y轴坐标}
-     */
-    moveTo(x, y) {
-        this.x = x;
-        this.y = y;
-    }
-
     // Prototies
 
     get parent() {

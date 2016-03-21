@@ -10,7 +10,12 @@ export default class extends PointElement {
         this._element.drag(this._move.bind(this), this._beginMove.bind(this));
     }
 
-    _move(dx, dy, qx, qy) {
+    /**
+     * 变形点移动方法，双轴
+     * @param  {int} dx x轴移动距离
+     * @param  {int} dy Y轴移动距离
+     */
+    _move(dx, dy) {
         let x = this._ox + dx, //移动后的X轴
             y = this._oy + dy, //移动后的Y轴
             minX = 0, //X轴最小值
@@ -27,17 +32,21 @@ export default class extends PointElement {
         // 计算可移动区域
         switch (this._position) {
             case Constains.POSITION_TOP_LEFT:
+                minX = 0;
                 maxX = parentX + parentW - Constains.ELEMENT_MIN_WIDTH;
+                minY = 0;
                 maxY = parentY + parentH - Constains.ELEMENT_MIN_HEIGHT;
                 break;
             case Constains.POSITION_TOP_RIGHT:
                 minX = parentX + Constains.ELEMENT_MIN_WIDTH;
                 maxX = panelW;
+                minY - 0;
                 maxY = parentY + parentH - Constains.ELEMENT_MIN_HEIGHT;
                 break;
             case Constains.POSITION_BOTTOM_LEFT:
+                minX = 0;
                 maxX = parentX + parentW - Constains.ELEMENT_MIN_WIDTH;
-                minX = parentY - parentH + Constains.ELEMENT_MIN_HEIGHT;
+                minY = parentY + Constains.ELEMENT_MIN_HEIGHT;
                 maxY = panelH;
                 break;
             case Constains.POSITION_BOTTOM_RIGHT:
@@ -47,29 +56,45 @@ export default class extends PointElement {
                 maxY = panelH;
                 break;
         }
-        console.log('-------------------------');
-        console.log(x, minX, maxX, y, minY, maxY);
-        console.log(parentX, parentY, parentW, parentH, panelW, panelH);
-        // 可移动区域
-        if ((x >= minX && x <= maxX) && (y >= minY && y <= maxY)) {
-            this.moveTo(x, y);
-        } else if ((x < minX || x > maxX) && (y >= minY && y <= maxY)) {
-            x = x < minX ? minX : maxX;
-            this.moveTo(x, y);
-        } else if ((y < minY || y > maxY) && (x >= minX && x <= maxX)) {
-            y = y < minY ? minY : maxY;
-            this.moveTo(x, y);
+        // 双轴都在可移动范围
+        if (x >= minX && x <= maxX && y >= minY && y <= maxY) {
+            // nothing
         }
+        // X轴超出范围，Y轴木有
+        else if ((x < minX || x > maxX) && (y >= minY && y <= maxY)) {
+            x = x < minX ? minX : maxX;
+            this.move(x, y);
+        }
+        // Y轴超出范围，X轴木有 
+        else if ((y < minY || y > maxY) && (x >= minX && x <= maxX)) {
+            y = y < minY ? minY : maxY;
+        }
+        // 双轴超出范围
+        else {
+            x = x < minX ? minX : maxX;
+            y = y < minY ? minY : maxY;
+        }
+        this.move(x, y);
     }
 
+    /**
+     * 变形点开始移动事件
+     */
     _beginMove() {
         this._ox = this._x;
         this._oy = this._y;
         this._parent.beginResize();
     }
 
-    moveTo(x, y){
-        super.moveTo(x, y);
-        //this._parent.resize(this._position, dx, dy);
+    /**
+     * 重载函数，添加操作父节点的变形操作
+     * @param  {int} x 变形点X轴坐标
+     * @param  {int} y 变形点Y轴坐标
+     */
+    move(x, y) {
+        super.move(x, y);
+        let dx = x - this._ox - this._borderWidth,
+            dy = y - this._oy;
+        this._parent.resize(this._position, dx, dy);
     }
 }
