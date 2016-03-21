@@ -53,14 +53,23 @@ export default class extends PointElement {
         // 可移动区域
         if ((x >= minX && x <= maxX) && (y >= minY && y <= maxY)) {
             this.moveTo(x, y);
-            //this._parent.resize(this, , dx, dy);
+        } else if ((x < minX || x > maxX) && (y >= minY && y <= maxY)) {
+            x = x < minX ? minX : maxX;
+            this.moveTo(x, y);
+        } else if ((y < minY || y > maxY) && (x >= minX && x <= maxX)) {
+            y = y < minY ? minY : maxY;
+            this.moveTo(x, y);
         }
-
     }
 
     _beginMove() {
         this._ox = this._x;
         this._oy = this._y;
         this._parent.beginResize();
+    }
+
+    moveTo(x, y){
+        super.moveTo(x, y);
+        //this._parent.resize(this._position, dx, dy);
     }
 }

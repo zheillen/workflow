@@ -30,68 +30,6 @@ export default class extends Element {
     // Method
 
     /**
-     * 初始化节点
-     */
-    init() {
-        this._element = this._paper.rect(this._x, this._y, this._w, this._h, this._radius);
-        this._element.attr({
-            'fill': this._backgroundColor,
-            'stroke': this._borderColor,
-            'stroke-width': this._borderWidth,
-            'cursor': Constains.CURSOR_DEFAULT
-        });
-        this._element.toBack();
-    }
-
-    /**
-     * 注册移动事件
-     * @param callback {回调方法}
-     */
-    onMove(callback) {
-        this.on(Constains.EVENT_MOVE, callback);
-    }
-
-    /**
-     * 注册变形事件
-     * @param callback  {回调方法}
-     */
-    onResize(callback) {
-        this.on(Constains.EVENT_RESIZE, callback);
-    }
-
-    /**
-     * 移动节点
-     * @param x {X轴}
-     * @param y {Y轴}
-     */
-    move(x, y) {}
-
-    beginResize() {
-        this._ow = this._w;
-        this._oh = this._h;
-        this._ox = this._x;
-        this._oy = this._y;
-        // 执行开始调整事件
-        let callSet = this._eventMap.get(Constains.EVENT_ENGIN_RESIZE);
-        callSet instanceof Set && callSet.forEach(item => typeof item === 'function' && item());
-    }
-
-    /**
-     * 调整节点
-     * @param {int} w 宽度
-     * @param {int} h 高度
-     */
-    resize(x, y) {
-        // 重新绘制连接点
-        this._renderLinkPointElement();
-        // 重新绘制变形点
-        this._renderResizeElement();
-        // 执行调整事件
-        let callSet = this._eventMap.get(Constains.EVENT_RESIZE);
-        callSet instanceof Set && callSet.forEach(item => typeof item === 'function' && item());
-    }
-
-    /**
      * 创建4个连接点
      */
     _createLinkPointElement() {
@@ -191,6 +129,68 @@ export default class extends Element {
      * 隐藏连接点
      */
     _hideResizeElement() {}
+
+    /**
+     * 初始化节点
+     */
+    init() {
+        this._element = this._paper.rect(this._x, this._y, this._w, this._h, this._radius);
+        this._element.attr({
+            'fill': this._backgroundColor,
+            'stroke': this._borderColor,
+            'stroke-width': this._borderWidth,
+            'cursor': Constains.CURSOR_DEFAULT
+        });
+        this._element.toBack();
+    }
+
+    /**
+     * 注册移动事件
+     * @param callback {回调方法}
+     */
+    onMove(callback) {
+        this.on(Constains.EVENT_MOVE, callback);
+    }
+
+    /**
+     * 注册变形事件
+     * @param callback  {回调方法}
+     */
+    onResize(callback) {
+        this.on(Constains.EVENT_RESIZE, callback);
+    }
+
+    /**
+     * 移动节点
+     * @param x {X轴}
+     * @param y {Y轴}
+     */
+    move(x, y) {}
+
+    beginResize() {
+        this._ow = this._w;
+        this._oh = this._h;
+        this._ox = this._x;
+        this._oy = this._y;
+        // 执行开始调整事件
+        let callSet = this._eventMap.get(Constains.EVENT_ENGIN_RESIZE);
+        callSet instanceof Set && callSet.forEach(item => typeof item === 'function' && item());
+    }
+
+    /**
+     * 调整节点
+     * @param {int} w 宽度
+     * @param {int} h 高度
+     */
+    resize(x, y) {
+        // 重新绘制连接点
+        this._renderLinkPointElement();
+        // 重新绘制变形点
+        this._renderResizeElement();
+        // 执行调整事件
+        let callSet = this._eventMap.get(Constains.EVENT_RESIZE);
+        callSet instanceof Set && callSet.forEach(item => typeof item === 'function' && item());
+    }
 
     // Properties
     get data() {
