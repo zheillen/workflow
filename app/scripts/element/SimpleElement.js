@@ -171,6 +171,40 @@ export default class extends Element {
     }
 
     /**
+     * 节点移动方法
+     * @param  {int} dx x轴移动距离
+     * @param  {int} dy Y轴移动距离
+     */
+    _move(dx, dy) {
+        this.x = this._ox + dx;
+        this.y = this._oy + dy;
+        // 重新绘制连接点
+        this._renderLinkPointElement();
+        // 重新绘制变形点
+        this._renderResizeElement();
+
+        this.execEventCallback(Constains.EVENT_MOVE);
+    }
+
+    /**
+     * 节点开始移动事件
+     */
+    _beginMove() {
+        this._ox = this._x;
+        this._oy = this._y;
+        this.animate({ "fill-opacity": .2 }, 100);
+        this.execEventCallback(Constains.EVENT_BEGIN_MOVE);
+    }
+
+    /**
+     * 节点结束移动事件
+     */
+    _endMove() {
+        this.animate({ "fill-opacity": 1 }, 100);
+        this.execEventCallback(Constains.EVENT_END_MOVE);
+    }
+
+    /**
      * 初始化节点
      */
     init() {
@@ -178,29 +212,20 @@ export default class extends Element {
         this._element = this._paper.rect(this._x, this._y, this._w, this._h, this._radius);
         // 给实际节点赋值
         this._element.attr({
-            'fill': this._backgroundColor,
+            //'fill': this._backgroundColor,
+            'fill': '#34b0df',
             'stroke': this._borderColor,
             'stroke-width': this._borderWidth,
             'cursor': Constains.CURSOR_DEFAULT
         });
+        // 实际节点移动事件
+        this._element.drag(this._move.bind(this), this._beginMove.bind(this), this._endMove.bind(this));
         // 实际节点添加点击事件
         this._element.click(function() {
             this.execEventCallback(Constains.EVENT_CLICK);
         }.bind(this));
         // 实际节点放到最后面，防止挡住变形点和连接点
         this._element.toBack();
-    }
-
-    /**
-     * 节点大小变形前方法，记录变形前的坐标和宽高
-     */
-    beginResize() {
-        this._ox = this._x;
-        this._oy = this._y;
-        this._ow = this._w;
-        this._oh = this._h;
-        // 执行变形前事件
-        this.execEventCallback(Constains.EVENT_ENGIN_RESIZE);
     }
 
     /**
@@ -250,7 +275,27 @@ export default class extends Element {
         // 重新绘制变形点
         this._renderResizeElement();
         // 执行变形事件
-        //this.execEventCallback(Constains.EVENT_RESIZE);
+        this.execEventCallback(Constains.EVENT_RESIZE);
+    }
+
+    /**
+     * 节点大小变形前方法，记录变形前的坐标和宽高
+     */
+    beginResize() {
+        this._ox = this._x;
+        this._oy = this._y;
+        this._ow = this._w;
+        this._oh = this._h;
+        // 执行变形前事件
+        this.execEventCallback(Constains.EVENT_ENGIN_RESIZE);
+    }
+
+    /**
+     * 节点大小变形前后方法
+     */
+    endResize() {
+        // 执行变形前事件
+        this.execEventCallback(Constains.EVENT_END_RESIZE);
     }
 
     /**

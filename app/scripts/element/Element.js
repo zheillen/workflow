@@ -84,7 +84,7 @@ export default class {
         }
         if (event in Constains) {
             let callSet = this._eventMap.get(event);
-            callSet instanceof Set && callSet.forEach(item => typeof item === 'function' && item.call(this));
+            callSet instanceof Set && callSet.forEach(item => typeof item === 'function' && item.call(this, event));
         } else {
             throw new Error("Can't find event " + event + ".");
         }
@@ -114,6 +114,15 @@ export default class {
      */
     onMove(callback) {
         this.on(Constains.EVENT_MOVE, callback);
+    }
+
+    /**
+     * 节点动画效果
+     * @param  {Object} attrs 节点样式属性对象
+     * @param  {int} time  执行时间
+     */
+    animate(attrs, time) {
+        this._element.animate(attrs, time);
     }
 
     // Properties

@@ -13,6 +13,31 @@ let val = 120,
 paperCanvas.style.padding = padding + 'px';
 
 let startElement = new FlowElement(raphael, val * 1.5, val, val, val);
-startElement.on(Constains.EVENT_CLICK, function() {
-    console.log('element id: ', this.id);
+startElement.on(Constains.EVENT_CLICK, function(event) {
+    console.log('element id: ', this.id, event);
+});
+
+
+startElement.on(Constains.EVENT_MOVE, function(event) {
+    console.log('element id: ', this.id, event);
+});
+
+startElement.on(Constains.EVENT_BEGIN_MOVE, function(event) {
+    console.log('element id: ', this.id, event);
+});
+
+startElement.on(Constains.EVENT_END_MOVE, function(event) {
+    console.log('element id: ', this.id, event);
+});
+
+startElement.on(Constains.EVENT_RESIZE, function(event) {
+    console.log('element id: ', this.id, event);
+});
+
+startElement.on(Constains.EVENT_ENGIN_RESIZE, function(event) {
+    console.log('element id: ', this.id, event);
+});
+
+startElement.on(Constains.EVENT_END_RESIZE, function(event) {
+    console.log('element id: ', this.id, event);
 });

@@ -7,11 +7,10 @@ import PointElement from './PointElement';
 export default class extends PointElement {
     constructor(raphael, radius, x, y) {
         super(raphael, radius, x, y);
-        this._element.drag(this._move.bind(this), this._beginMove.bind(this));
     }
 
     /**
-     * 变形点移动方法，双轴
+     * 变形点移动方法
      * @param  {int} dx x轴移动距离
      * @param  {int} dy Y轴移动距离
      */
@@ -84,6 +83,21 @@ export default class extends PointElement {
         this._ox = this._x;
         this._oy = this._y;
         this._parent.beginResize();
+    }
+
+    /**
+     * 变形点开始移动事件
+     */
+    _endMove() {
+        this._parent.endResize();
+    }
+
+    /**
+     * 初始化
+     */
+    init(){
+        super.init();
+        this._element.drag(this._move.bind(this), this._beginMove.bind(this), this._endMove.bind(this));
     }
 
     /**

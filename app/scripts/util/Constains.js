@@ -9,10 +9,13 @@
 export const EVENT_CLICK = 'EVENT_CLICK';
 // 移动事件
 export const EVENT_MOVE = 'EVENT_MOVE';
+export const EVENT_BEGIN_MOVE = 'EVENT_BEGIN_MOVE';
+export const EVENT_END_MOVE = 'EVENT_END_MOVE';
 // 调整大小事件
 export const EVENT_RESIZE = 'EVENT_RESIZE';
-// 开始调整大小事件
 export const EVENT_ENGIN_RESIZE = 'EVENT_ENGIN_RESIZE';
+export const EVENT_END_RESIZE = 'EVENT_END_RESIZE';
+
 
 /* --------光标常量-------- */
 // 默认光标
